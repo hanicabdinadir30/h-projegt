@@ -1,0 +1,61 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GlowBeauty</title>
+<style>
+body{font-family:sans-serif;background:#fefae0;padding:20px}
+.main{max-width:500px;margin:auto;background:#fff;padding:20px;border-radius:10px;box-shadow:0 2px 5px #0002}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:15px 0}
+.item{border:1px solid #ddd;padding:10px;text-align:center;cursor:pointer;border-radius:6px}
+.item img{width:100%;height:60px;object-fit:cover;border-radius:6px}
+.active{border:2px solid #606c38;background:#faedcd}
+input,button{width:100%;padding:10px;margin:6px 0;border-radius:6px;border:1px solid #ccc;box-sizing:border-box}
+button{border:none;font-weight:bold;cursor:pointer}
+.add{background:#d4a373;color:#fff}.buy{background:#606c38;color:#fff}
+</style>
+</head>
+<body>
+<div class="main">
+<h2 style="text-align:center">GlowBeauty</h2>
+<input id="name" placeholder="Full Name">
+<input id="age" type="number" placeholder="Age (18+)">
+<div class="grid" id="products"></div>
+<button class="add" id="addBtn">Add to Cart</button><hr>
+<div id="cart">Cart is empty</div>
+<h4>Total: $<span id="total">0</span></h4>
+<button class="buy" id="buyBtn">Buy Now</button>
+</div>
+
+<script>
+const items=[{n:"Lipliner",p:10,i:"https://images.unsplash.com/photo-1625093742435-6fa192b6fb10?w=200"},
+{n:"Foundation",p:12,i:"https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=200"},
+{n:"Perfume",p:65,i:"https://images.unsplash.com/photo-1541643600914-78b084683601?w=200"}];
+
+let picked=null,cart=[];
+const $=id=>document.getElementById(id);
+
+$("products").innerHTML=items.map((x,idx)=>`
+<div class="item" data-i="${idx}">
+<img src="${x.i}"><br>${x.n}<br>$${x.p}</div>`).join("");
+
+document.querySelectorAll(".item").forEach(el=>el.onclick=()=>{
+picked=items[el.dataset.i];
+document.querySelectorAll(".item").forEach(a=>a.classList.remove("active"));
+el.classList.add("active");
+});
+
+function update(){
+$("cart").innerHTML=cart.length?cart.map(x=>`<div>${x.n} - $${x.p}</div>`).join(""):"Cart is empty";
+$("total").textContent=cart.reduce((s,x)=>s+x.p,0);
+}
+
+$("addBtn").onclick=()=>{
+if(!picked||+$("age").value<18||!$("name").value.trim()) return alert("Select product, enter name, and age 18+");
+cart.push(picked); update();
+};
+
+$("buyBtn").onclick=()=>{
+if(!cart.length) return alert("Cart is empty!");
+alert("Success! Order placed."); cart=[]; update();
+};
+</script>
+</body>
+</html>
